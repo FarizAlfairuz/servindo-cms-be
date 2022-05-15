@@ -30,7 +30,7 @@ passport.serializeUser((user, cb) => {
 })
 
 passport.deserializeUser((id, cb) => {
-  User.finByPk(id)
+  User.findByPk(id)
     .then((user) => {
       return cb(null, user)
     })

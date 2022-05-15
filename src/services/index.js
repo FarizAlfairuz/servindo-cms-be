@@ -1,11 +1,9 @@
-/* eslint-disable global-require */
-/* eslint-disable import/no-dynamic-require */
 const fs = require('fs')
 const path = require('path')
 
 const basename = path.basename(__filename)
 
-const routes = {}
+const services = {}
 
 fs.readdirSync(__dirname)
   .filter(
@@ -13,10 +11,10 @@ fs.readdirSync(__dirname)
       file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js'
   )
   .forEach((file) => {
-    const route = require(path.join(__dirname, file))
-    const routeName = file.slice(0, -3)
+    const service = require(path.join(__dirname, file))
+    const serviceName = file.slice(0, -3)
 
-    routes[routeName] = route
+    services[serviceName] = service
   })
 
-module.exports = routes
+module.exports = services

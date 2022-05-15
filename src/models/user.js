@@ -31,10 +31,7 @@ module.exports = (sequelize, DataTypes) => {
           'support',
         ]),
         allowNull: false,
-        defpassword: {
-          type: DataTypes.STRING,
-          allowNull: false,
-        },
+        defaultValue: 'superadmin'
       },
     },
     {
@@ -48,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
         // plan untuk query kedepannya
         withPassword: {
           // misal
-          attributes: { include: ['password'] },
+          attributes: {},
         },
       },
     }

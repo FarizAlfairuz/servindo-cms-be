@@ -5,7 +5,7 @@ const path = require('path')
 
 const basename = path.basename(__filename)
 
-const routes = {}
+const controllers = {}
 
 fs.readdirSync(__dirname)
   .filter(
@@ -13,10 +13,10 @@ fs.readdirSync(__dirname)
       file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js'
   )
   .forEach((file) => {
-    const route = require(path.join(__dirname, file))
-    const routeName = file.slice(0, -3)
+    const controller = require(path.join(__dirname, file))
+    const controllerName = file.slice(0, -3)
 
-    routes[routeName] = route
+    controllers[controllerName] = controller
   })
 
-module.exports = routes
+module.exports = controllers
