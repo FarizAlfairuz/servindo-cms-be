@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt')
 const { User } = require('../models')
-const { parseSequelizeOptions } = require('../helpers')
+const { parseSequelizeOptions, getCursor } = require('../helpers')
 
 exports.create = async (user) => {
   const salt = await bcrypt.genSalt(10)
@@ -22,7 +22,15 @@ exports.create = async (user) => {
 exports.get = async (query) => {
   const options = parseSequelizeOptions(query)
 
-  return User.findAll(options)
+  const user = await User.findAll(options)
+  const cursor = await getCursor(User, query)
+
+  const data = {
+    edge: user,
+    cursor
+  }
+
+  return data
 }
 
 exports.getById = async (id) => {

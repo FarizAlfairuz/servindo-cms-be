@@ -4,24 +4,25 @@ const bcrypt = require('bcrypt')
 const { User } = require('../models')
 
 passport.use(
-  new LocalStrategy((username, password, cb) => {
-    User.scope('withPassword')
-      .findOne({ where: { username } })
-      .then((user) => {
-        // user not found
-        if (!user) return cb(null, false)
+  new LocalStrategy(async (username, password, cb) => {
+    try {
+      const user = await User.scope('withPassword').findOne({ where: { username } })
+      // user not found
+      if (!user) return cb(null, false)
 
-        // password doesn't match
-        if (!bcrypt.compare(password, user.password)) {
-          return cb(null, false)
-        }
+      // password doesn't match
+      const compare = await bcrypt.compare(password, user.password)
 
-        // password match
-        return cb(null, user)
-      })
-      .catch((err) => {
+      if (!compare) {
+        return cb(null, false)
+      }
+
+      // password match
+      return cb(null, user)
+
+    } catch (err) {
         return cb(err)
-      })
+    }
   })
 )
 

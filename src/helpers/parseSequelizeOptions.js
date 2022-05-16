@@ -8,7 +8,7 @@ module.exports = (query) => {
 
     if (query.limit) {
       if (query.page) {
-        options.offset = parseInt(query.limit, 10) * parseInt(query.page, 10)
+        options.offset = parseInt(query.limit, 10) * parseInt(query.page - 1, 10)
         delete filter.page
       }
 
