@@ -1,22 +1,24 @@
 const { Router } = require('express')
 const { userController } = require('../controllers')
-const { validateRequestSchema } = require('../middlewares')
+const { validateRequestSchema, checkRole } = require('../middlewares')
 
 const router = Router()
 
 router
   .route('/users')
   .post(
+    checkRole(['superadmin']),
     validateRequestSchema,
     userController.createUser
   )
-  .get(userController.getUsers)
+  .get(checkRole(['superadmin']), userController.getUsers)
 
 router
   .route('/users/:id')
-  .get(userController.getUserById)
-  .delete(userController.deleteUserById)
+  .get(checkRole('superadmin'), userController.getUserById)
+  .delete(checkRole(['superadmin']), userController.deleteUserById)
   .put(
+    checkRole(['superadmin']),
     validateRequestSchema,
     userController.updateUserById
   )

@@ -1,11 +1,13 @@
 const { Router } = require('express')
 const passport = require('../utils/passport')
-
+const response = require('../utils/response')
+const authFailHandling = require('../middlewares/authFailHandling')
 const router = Router()
 
 router.post(
   '/login',
   passport.authenticate('local', { failureMessage: true }),
+  // authFailHandling,
   (req, res) => {
     const userData = {
       id: req.user.id,
@@ -13,21 +15,14 @@ router.post(
       role: req.user.role,
     }
 
-    res.status(200).json({
-      success: true,
-      message: 'Log in success.',
-      data: userData
-    })
+    return response.success(res, userData, 'Log in success!')
   }
 )
 
 router.post('/logout', (req, res) => {
   req.logout()
 
-  return res.status(200).json({
-    success: true,
-    message: 'Log out success.',
-  })
+  return response.success(res, undefined, 'Log out success!')
 })
 
 module.exports = router
