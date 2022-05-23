@@ -1,5 +1,5 @@
 const response = require('../utils/response')
-const { userServices } = require('../services')
+const { userServices, changelogServices } = require('../services')
 const { handleUniqueViolation } = require('../helpers/handleSequelizeErrors')
 
 exports.createUser = async (req, res) => {
@@ -7,6 +7,14 @@ exports.createUser = async (req, res) => {
     const user = req.body
 
     const data = await userServices.create(user)
+
+    const changelog = {
+      description: `Created user ${data.username}`,
+      category: 'user',
+      changedBy: req.user.id
+    }
+
+    await changelogServices.create(changelog)
 
     return response.created(res, data, 'Successfully created user!')
   } catch (error) {
@@ -71,6 +79,14 @@ exports.updateUserById = async (req, res) => {
 
     if (!data) return response.not_found(res, undefined, 'User not found!')
 
+    const changelog = {
+      description: `Edited user ${data.username}`,
+      category: 'user',
+      changedBy: req.user.id
+    }
+
+    await changelogServices.create(changelog)
+
     return response.success(res, data, 'Successfully updated user!')
   } catch (error) {
     console.log(error)
@@ -90,6 +106,14 @@ exports.deleteUserById = async (req, res) => {
     const data = await userServices.deleteById(id)
 
     if (!data) return response.not_found(res, undefined, 'User not found!')
+
+    const changelog = {
+      description: `Deleted user ${data}`,
+      category: 'user',
+      changedBy: req.user.id
+    }
+
+    await changelogServices.create(changelog)
 
     return response.success(res, undefined, 'Successfully deleted user!')
   } catch (error) {

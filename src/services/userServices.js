@@ -25,10 +25,9 @@ exports.get = async (query) => {
       [Op.or]: [
         { username: { [Op.iLike]: `%${query.search}%` } },
 
-        sequelize.where(
-          sequelize.cast(sequelize.col('User.role'), 'varchar'),
-          { [Op.iLike]: `%${query.search}%` }
-        )
+        sequelize.where(sequelize.cast(sequelize.col('User.role'), 'varchar'), {
+          [Op.iLike]: `%${query.search}%`,
+        }),
       ],
     }
     options.where = where
@@ -39,7 +38,7 @@ exports.get = async (query) => {
 
   const data = {
     edge: user,
-    cursor
+    cursor,
   }
 
   return data
@@ -58,17 +57,6 @@ exports.updateById = async (id, updateData) => {
 
   if (!user) return null
 
-  // if (updateData.password) {
-  //   const salt = await bcrypt.genSalt(10)
-  //   const hashedPassword = await bcrypt.hash(updateData.password, salt)
-
-  //   delete updateData.password
-
-  //   updateData.push({password: hashedPassword})
-  // }
-
-  // console.log(updateData)
-
   user.set(updateData)
 
   await user.save()
@@ -81,7 +69,9 @@ exports.deleteById = async (id) => {
 
   if (!user) return null
 
+  const deletedUser = user.username
+
   await user.destroy()
 
-  return true
+  return deletedUser
 }
