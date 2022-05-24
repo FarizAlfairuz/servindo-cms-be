@@ -22,12 +22,6 @@ exports.get = async (query) => {
     const where = {
       [Op.or]: [
         { description: { [Op.iLike]: `%${query.search}%` } },
-        sequelize.where(
-          sequelize.cast(sequelize.col(Changelog.category), 'varchar'),
-          {
-            [Op.iLike]: `%${query.search}%`,
-          }
-        ),
       ],
     }
     options.where = where

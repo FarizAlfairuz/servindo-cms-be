@@ -28,5 +28,7 @@ module.exports = (query) => {
     }
   }
 
+  options.order = [['updatedAt', 'DESC']]
+
   return options
 }
