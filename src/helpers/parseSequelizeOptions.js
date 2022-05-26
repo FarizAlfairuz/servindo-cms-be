@@ -1,4 +1,5 @@
 const { Op } = require('sequelize')
+const { Sequelize } = require('../models')
 
 module.exports = (query) => {
   const options = {}
@@ -22,7 +23,7 @@ module.exports = (query) => {
 
       Object.keys(filter).forEach((field) => {
         const fieldValue = filter[field]
-        whereObj[field] = { [Op.like]: `%${fieldValue}%` }
+        whereObj[field] = Sequelize.literal(`"${field}"::TEXT LIKE '%${fieldValue}%'`)
       })
       options.where = whereObj
     }
