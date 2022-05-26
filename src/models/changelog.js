@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
           'marketing',
           'purchasing',
           'support',
+          'item',
         ]),
         allowNull: false,
         defaultValue: 'user',
