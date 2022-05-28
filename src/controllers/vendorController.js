@@ -9,7 +9,7 @@ exports.createVendor = async (req, res) => {
     const data = await vendorServices.create(vendor)
 
     const changelog = {
-      description: `Created vendor ${data.vendorname}`,
+      description: `Created vendor ${data.name}`,
       category: 'purchasing',
       changedBy: req.user.id
     }
@@ -80,9 +80,9 @@ exports.updateVendorById = async (req, res) => {
     if (!data) return response.not_found(res, undefined, 'Vendor not found!')
 
     const changelog = {
-      description: `Edited vendor ${data.vendorname}`,
+      description: `Edited vendor ${data.name}`,
       category: 'purchasing',
-      changedBy: req.vendor.id
+      changedBy: req.user.id
     }
 
     await changelogServices.create(changelog)
@@ -110,7 +110,7 @@ exports.deleteVendorById = async (req, res) => {
     const changelog = {
       description: `Deleted vendor ${data}`,
       category: 'purchasing',
-      changedBy: req.vendor.id
+      changedBy: req.user.id
     }
 
     await changelogServices.create(changelog)

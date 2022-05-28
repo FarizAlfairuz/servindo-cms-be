@@ -59,7 +59,7 @@ exports.deleteById = async (id) => {
 
   if (!item) return null
 
-  const deletedItem = item.itemname
+  const deletedItem = item.name
 
   await item.destroy()
 

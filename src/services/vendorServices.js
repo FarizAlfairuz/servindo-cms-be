@@ -67,7 +67,7 @@ exports.deleteById = async (id) => {
 
   if (!vendor) return null
 
-  const deletedVendor = vendor.vendorname
+  const deletedVendor = vendor.name
 
   await vendor.destroy()
 
