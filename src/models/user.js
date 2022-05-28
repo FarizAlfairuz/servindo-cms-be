@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.hasMany(models.Changelog)
     }
   }
   User.init(
@@ -38,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
           'support',
         ]),
         allowNull: false,
-        defaultValue: 'superadmin'
+        defaultValue: 'superadmin',
       },
     },
     {
@@ -64,7 +65,7 @@ module.exports = (sequelize, DataTypes) => {
   })
 
   User.beforeUpdate(async (user) => {
-    if(user.password) {
+    if (user.password) {
       const hashedPassword = await hashPassword(user.password)
       user.password = hashedPassword
     }
