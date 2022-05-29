@@ -5,8 +5,11 @@ const { parseSequelizeOptions, getCursor } = require('../helpers')
 exports.create = async (item) => {
   let createdItem = await Item.create({
     name: item.name,
-    stock: item.stock,
-    base_price: item.base_price,
+    quantity: item.quantity,
+    type: item.type,
+    cogs: item.cogs,
+    price: item.price,
+    discount: item.discount,
   })
 
   return createdItem
