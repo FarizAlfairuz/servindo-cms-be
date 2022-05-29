@@ -1,3 +1,4 @@
+const { Op } = require('sequelize')
 const { sequelize } = require('../utils/database')
 const customerServices = require('./customerServices')
 const itemServices = require('./itemServices')
@@ -70,7 +71,22 @@ exports.get = async (query) => {
   if (query.search) {
     delete options.where
     const where = {
-      [Op.or]: [{ description: { [Op.iLike]: `%${query.search}%` } }],
+      [Op.or]: [
+        sequelize.where(
+          sequelize.cast(sequelize.col('Sale.date'), 'varchar'),
+          {
+            [Op.iLike]: `%${query.search}%`,
+          }
+        ),
+        sequelize.where(
+          sequelize.cast(sequelize.col('Sale.gross'), 'varchar'),
+          {
+            [Op.iLike]: `%${query.search}%`,
+          }
+        ),
+        { '$item.name$': { [Op.iLike]: `%${query.search}%` } },
+        { '$customer.name$': { [Op.iLike]: `%${query.search}%` } },
+      ],
     }
     options.where = where
   }

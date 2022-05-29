@@ -22,6 +22,7 @@ exports.get = async (query) => {
     const where = {
       [Op.or]: [
         { description: { [Op.iLike]: `%${query.search}%` } },
+        { '$changedBy.username$': { [Op.iLike]: `%${query.search}%` } },
       ],
     }
     options.where = where
