@@ -1,7 +1,6 @@
 const { sequelize } = require('../utils/database')
 const vendorServices = require('./vendorServices')
-const itemServices = require('./itemServices')
-const { Purchase, Item } = require('../models')
+const { Purchase, Item, Vendor } = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
 
 exports.create = async (data) => {
@@ -11,9 +10,7 @@ exports.create = async (data) => {
   const options = { transaction: dbTransaction }
 
   try {
-    const now = new Date()
-
-    const purchase = await Purchase.create({ date: now }, options)
+    const purchase = await Purchase.create({ date: items.date }, options)
 
     const vendorInfo = await vendorServices.getById(vendor.id)
 
@@ -34,17 +31,23 @@ exports.create = async (data) => {
       },
     })
 
+    // increase stock
     const stock = itemInfo.quantity + items.quantity
+
+    // sum gross
     const gross = items.cogs * items.quantity
 
-    await itemInfo.set({ quantity: stock })
+    await itemInfo.set({
+      quantity: stock,
+      cogs: items.cogs,
+    })
 
     await itemInfo.save(options)
 
     purchase.set({
       totalQuantity: items.quantity,
       gross: gross,
-      date: now,
+      date: items.date,
       itemId: itemInfo.id,
       vendorId: vendorInfo.id,
     })
@@ -65,6 +68,19 @@ exports.create = async (data) => {
 
 exports.get = async (query) => {
   const options = parseSequelizeOptions(query)
+
+  if (query.search) {
+    delete options.where
+    const where = {
+      [Op.or]: [{ description: { [Op.iLike]: `%${query.search}%` } }],
+    }
+    options.where = where
+  }
+
+  options.include = [
+    { model: Item, as: 'item' },
+    { model: Vendor, as: 'vendor' },
+  ]
 
   const purchases = await Purchase.findAll(options)
   const cursor = await getCursor(Purchase, query)

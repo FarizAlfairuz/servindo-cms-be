@@ -1,7 +1,7 @@
 'use strict'
 const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
-  class Item extends Model {
+  class Sale extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,48 +9,46 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.belongsTo(models.Item, { as: 'item', foreignKey: 'itemId' })
+      this.belongsTo(models.Customer, { as: 'customer', foreignKey: 'customerId' })
     }
   }
-  Item.init(
+  Sale.init(
     {
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-      },
-      quantity: {
+      totalQuantity: {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0,
       },
-      type: {
-        type: DataTypes.ENUM([
-          'unit',
-          'supplies'
-        ]),
-        allowNull: false,
-        defaultValue: 'unit',
-      },
-      cogs: {
-        type: DataTypes.FLOAT,
+      gross: {
+        type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0,
       },
-      price: {
-        type: DataTypes.FLOAT,
+      date: {
+        type: DataTypes.DATEONLY,
         allowNull: false,
-        defaultValue: 0,
       },
       discount: {
         type: DataTypes.FLOAT,
         allowNull: false,
         defaultValue: 0,
       },
+      netSales: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
+      netProfit: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
     },
     {
       sequelize,
-      modelName: 'Item',
+      modelName: 'Sale',
     }
   )
-  return Item
+  return Sale
 }
