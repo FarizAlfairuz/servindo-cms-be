@@ -4,10 +4,9 @@ const { parseSequelizeOptions, getCursor } = require('../helpers')
 
 exports.create = async (operational) => {
   let createdOperational = await Operational.create({
-    name: operational.name,
-    address: operational.address,
-    cp: operational.cp,
-    phone: operational.phone,
+    date: operational.date,
+    description: operational.description,
+    total: operational.total,
   })
 
   createdOperational = createdOperational.toJSON()

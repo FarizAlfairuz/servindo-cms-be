@@ -7,21 +7,21 @@ const router = Router()
 router
   .route('/operationals')
   .post(
-    checkRole(['superadmin', 'marketing']),
+    checkRole(['superadmin', 'finance']),
     validateRequestSchema,
     operationalController.createOperational
   )
-  .get(checkRole(['superadmin', 'marketing']), operationalController.getOperationals)
+  .get(checkRole(['superadmin', 'finance']), operationalController.getOperationals)
 
 router
   .route('/operationals/:id')
-  .get(checkRole('superadmin', 'marketing'), operationalController.getOperationalById)
+  .get(checkRole('superadmin', 'finance'), operationalController.getOperationalById)
   .delete(
-    checkRole(['superadmin', 'marketing']),
+    checkRole(['superadmin', 'finance']),
     operationalController.deleteOperationalById
   )
   .put(
-    checkRole(['superadmin', 'marketing']),
+    checkRole(['superadmin', 'finance']),
     validateRequestSchema,
     operationalController.updateOperationalById
   )
