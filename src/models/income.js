@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
   Income.init(
     {
       type: {
-        type: DataTypes.ENUM(['unit', 'supplies', 'lease']),
+        type: DataTypes.ENUM(['unit', 'supplies', 'lease', 'service']),
         allowNull: false,
       },
       date: {

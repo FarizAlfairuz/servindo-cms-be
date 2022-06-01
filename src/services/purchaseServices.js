@@ -15,6 +15,9 @@ exports.create = async (data) => {
 
     const vendorInfo = await vendorServices.getById(vendor.id)
 
+    // exclude date from items
+    const {date, ...newItem} = items
+
     // markup price
     const markup = 25 / 100
 
@@ -26,7 +29,7 @@ exports.create = async (data) => {
       ...{
         where: { name: items.name },
         defaults: {
-          ...items,
+          ...newItem,
           price,
         },
       },

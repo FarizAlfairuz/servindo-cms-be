@@ -1,15 +1,46 @@
 const { Op } = require('sequelize')
-const { Service } = require('../models')
+const { Service, Income, sequelize } = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
 
 exports.create = async (service) => {
-  let createdService = await Service.create({
-    description: service.description,
-    date: service.date,
-    price: service.price,
-  })
+  const dbTransaction = await sequelize.transaction()
+  const options = { transaction: dbTransaction }
+  try {
+    const createdService = await Service.create(
+      {
+        description: service.description,
+        date: service.date,
+        price: service.price,
+        itemId: service.itemId,
+        customerId: service.customerId,
+      },
+      options
+    )
 
-  return createdService
+    // save to income table
+    await Income.create(
+      {
+        type: 'service',
+        date: service.date,
+        quantity: 1,
+        price: service.price,
+        gross: service.price,
+        itemId: service.itemId,
+        customerId: service.customerId,
+      },
+      options
+    )
+
+    await dbTransaction.commit()
+
+    return createdService
+  } catch (error) {
+    console.log(error)
+
+    dbTransaction.rollback()
+
+    throw error
+  }
 }
 
 exports.get = async (query) => {
