@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const { incomeController } = require('../controllers')
-const { validateRequestSchema, checkRole } = require('../middlewares')
+const { checkRole } = require('../middlewares')
 
 const router = Router()
 
