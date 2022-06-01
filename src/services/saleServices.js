@@ -2,7 +2,7 @@ const { Op } = require('sequelize')
 const { sequelize } = require('../utils/database')
 const customerServices = require('./customerServices')
 const itemServices = require('./itemServices')
-const { Sale, Item, Customer } = require('../models')
+const { Sale, Item, Customer, Income } = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
 
 exports.create = async (data) => {
@@ -53,6 +53,20 @@ exports.create = async (data) => {
 
     await sale.save(options)
 
+    // save to income table
+    await Income.create(
+      {
+        type: itemInfo.type,
+        date: items.date,
+        quantity: items.quantity,
+        price: cogsGross,
+        gross: gross,
+        itemId: itemInfo.id,
+        customerId: customerInfo.id,
+      },
+      options
+    )
+
     await dbTransaction.commit()
 
     return sale
@@ -72,12 +86,9 @@ exports.get = async (query) => {
     delete options.where
     const where = {
       [Op.or]: [
-        sequelize.where(
-          sequelize.cast(sequelize.col('Sale.date'), 'varchar'),
-          {
-            [Op.iLike]: `%${query.search}%`,
-          }
-        ),
+        sequelize.where(sequelize.cast(sequelize.col('Sale.date'), 'varchar'), {
+          [Op.iLike]: `%${query.search}%`,
+        }),
         sequelize.where(
           sequelize.cast(sequelize.col('Sale.gross'), 'varchar'),
           {

@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.Lease, { as: 'lease', foreignKey: 'leaseId' })
+      this.belongsTo(models.Customer, { as: 'customer', foreignKey: 'customerId' })
     }
   }
   LeasedItem.init(
@@ -26,10 +26,11 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
+      initialAutoIncrement: '1000',
       sequelize,
       modelName: 'LeasedItem',
-      initialAutoIncrement: 1000,
     }
   )
+  
   return LeasedItem
 }

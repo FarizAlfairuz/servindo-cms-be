@@ -2,8 +2,7 @@ const { Op } = require('sequelize')
 const { sequelize } = require('../utils/database')
 const customerServices = require('./customerServices')
 const itemServices = require('./itemServices')
-const leasedItemServices = require('./leasedItemServices')
-const { Lease, Item, Customer, LeasedItem } = require('../models')
+const { Lease, Customer, LeasedItem, Income } = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
 
 exports.create = async (lease) => {
@@ -67,6 +66,7 @@ exports.create = async (lease) => {
         await LeasedItem.create(
           {
             name: itemInfo.name,
+            customerId: customerInfo.id,
           },
           options
         )
@@ -83,6 +83,20 @@ exports.create = async (lease) => {
     })
 
     await leaseData.save(options)
+
+    // save to income table
+    await Income.create(
+      {
+        type: 'lease',
+        date: lease.date,
+        quantity: lease.quantity,
+        price: lease.price,
+        gross: gross,
+        customerId: customerInfo.id,
+        itemId: itemInfo.id,
+      },
+      options
+    )
 
     await dbTransaction.commit()
 
@@ -116,9 +130,7 @@ exports.get = async (query) => {
     options.where = where
   }
 
-  options.include = [
-    { model: Customer, as: 'customer' },
-  ]
+  options.include = [{ model: Customer, as: 'customer' }]
 
   const lease = await Lease.findAll(options)
   const cursor = await getCursor(Lease, query)
