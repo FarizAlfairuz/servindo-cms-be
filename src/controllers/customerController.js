@@ -10,7 +10,7 @@ exports.createCustomer = async (req, res) => {
 
     const changelog = {
       description: `Created customer ${data.name}`,
-      category: 'purchasing',
+      category: 'marketing',
       changedBy: req.user.id
     }
 

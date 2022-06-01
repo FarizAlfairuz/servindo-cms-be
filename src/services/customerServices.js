@@ -1,5 +1,5 @@
 const { Op } = require('sequelize')
-const { Customer, sequelize } = require('../models')
+const { Customer } = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
 
 exports.create = async (customer) => {
