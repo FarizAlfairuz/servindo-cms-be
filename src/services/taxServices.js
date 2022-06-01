@@ -3,9 +3,27 @@ const { Tax, sequelize } = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
 
 exports.create = async (tax) => {
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ]
+
+  const date = new Date(lease.date)
+  const month = months[date.getMonth()]
+
   let createdTax = await Tax.create({
     date: tax.date,
-    description: tax.description,
+    description: `${month} tax payment`,
     total: tax.total,
   })
 
