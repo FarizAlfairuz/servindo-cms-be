@@ -80,7 +80,7 @@ exports.updateItemById = async (req, res) => {
     if (!data) return response.not_found(res, undefined, 'Item not found!')
 
     const changelog = {
-      description: `Edited item ${data.username}`,
+      description: `Edited item ${data.name}`,
       category: 'item',
       changedBy: req.user.id,
     }
