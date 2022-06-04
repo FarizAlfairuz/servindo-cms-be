@@ -2,8 +2,15 @@ const { Op } = require('sequelize')
 const { sequelize } = require('../utils/database')
 const customerServices = require('./customerServices')
 const itemServices = require('./itemServices')
-const { Sale, Item, Customer, Income, FinancialStatement } = require('../models')
+const {
+  Sale,
+  Item,
+  Customer,
+  Income,
+  FinancialStatement,
+} = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
+const { buildSanitizeFunction } = require('express-validator')
 
 exports.create = async (data) => {
   const { items, customer } = data
@@ -128,4 +135,36 @@ exports.get = async (query) => {
   }
 
   return data
+}
+
+exports.getBalance = async (query) => {
+  const options = parseSequelizeOptions(query)
+
+  options.order = [
+    [sequelize.fn('date_trunc', 'month', sequelize.col('date')), 'DESC'],
+  ]
+
+  options.attributes = [
+    [sequelize.fn('date_trunc', 'month', sequelize.col('date')), 'date'],
+    [
+      sequelize.cast(sequelize.fn('sum', sequelize.col('gross')), 'int'),
+      'gross',
+    ],
+    [
+      sequelize.cast(sequelize.fn('sum', sequelize.col('netSales')), 'int'),
+      'netSales',
+    ],
+    [
+      sequelize.cast(sequelize.fn('sum', sequelize.col('netProfit')), 'int'),
+      'netProfit',
+    ],
+  ]
+
+  options.group = [sequelize.fn('date_trunc', 'month', sequelize.col('date'))]
+
+  options.where = sequelize.fn('EXTRACT(YEAR from "date") =', query.year)
+
+  const balance = await Sale.findAll(options)
+
+  return balance
 }

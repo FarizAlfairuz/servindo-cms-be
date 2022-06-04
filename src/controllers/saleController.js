@@ -42,3 +42,19 @@ exports.getSales = async (req, res) => {
     )
   }
 }
+
+exports.getBalance = async (req, res) => {
+  try {
+    const data = await saleServices.getBalance(req.query)
+
+    return response.success(res, data, 'Successfully retrieved balance!')
+  } catch (error) {
+    console.log(error)
+
+    return response.internal_server_error(
+      res,
+      undefined,
+      'Failed to retrieve balance!'
+    )
+  }
+}

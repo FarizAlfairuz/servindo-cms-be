@@ -6,10 +6,11 @@ const router = Router()
 
 router
   .route('/sales')
-  .post(
-    checkRole(['superadmin', 'marketing']),
-    saleController.createSale
-  )
+  .post(checkRole(['superadmin', 'marketing']), saleController.createSale)
   .get(checkRole(['superadmin', 'marketing']), saleController.getSales)
+
+router
+  .route('/balance')
+  .get(checkRole(['superadmin', 'marketing']), saleController.getBalance)
 
 module.exports = router
