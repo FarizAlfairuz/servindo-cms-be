@@ -141,11 +141,11 @@ exports.getBalance = async (query) => {
   const options = parseSequelizeOptions(query)
 
   options.order = [
-    [sequelize.fn('date_trunc', 'month', sequelize.col('date')), 'DESC'],
+    [sequelize.fn('date_trunc', 'month', sequelize.col('date')), 'ASC'],
   ]
 
   options.attributes = [
-    [sequelize.fn('date_trunc', 'month', sequelize.col('date')), 'date'],
+    [sequelize.fn('date_trunc', 'month', sequelize.col('date')), 'month'],
     [
       sequelize.cast(sequelize.fn('sum', sequelize.col('gross')), 'int'),
       'gross',
