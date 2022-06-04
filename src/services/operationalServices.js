@@ -1,17 +1,42 @@
 const { Op } = require('sequelize')
-const { Operational, sequelize } = require('../models')
+const { Operational, FinancialStatement, sequelize } = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
 
 exports.create = async (operational) => {
-  let createdOperational = await Operational.create({
+  const dbTransaction = await sequelize.transaction()
+  const options = { transaction: dbTransaction }
+
+  try {
+    const createdOperational = await Operational.create({
     date: operational.date,
     description: operational.description,
     total: operational.total,
-  })
+  }, options)
 
-  createdOperational = createdOperational.toJSON()
+
+  // create financial statement
+  await FinancialStatement.create(
+    {
+      description: operational.description,
+      type: 'operational',
+      credit: 0,
+      debit: operational.total,
+    },
+    options
+  )
+
+  await dbTransaction.commit()
 
   return createdOperational
+
+  } catch (error) {
+    console.log(error)
+
+    dbTransaction.rollback()
+
+    throw error
+  }
+
 }
 
 exports.get = async (query) => {

@@ -1,5 +1,5 @@
 const { Op } = require('sequelize')
-const { Tax, sequelize } = require('../models')
+const { Tax, FinancialStatement, sequelize } = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
 
 exports.create = async (tax) => {
@@ -21,15 +21,40 @@ exports.create = async (tax) => {
   const date = new Date(lease.date)
   const month = months[date.getMonth()]
 
-  let createdTax = await Tax.create({
-    date: tax.date,
-    description: `${month} tax payment`,
-    total: tax.total,
-  })
+  const dbTransaction = await sequelize.transaction()
+  const options = { transaction: dbTransaction }
 
-  createdTax = createdTax.toJSON()
+  try {
+    const createdTax = await Tax.create(
+      {
+        date: tax.date,
+        description: `${month} tax payment`,
+        total: tax.total,
+      },
+      options
+    )
 
-  return createdTax
+    // create financial statement
+    await FinancialStatement.create(
+      {
+        description: `${month} tax payment`,
+        type: 'tax',
+        credit: 0,
+        debit: tax.total,
+      },
+      options
+    )
+
+    await dbTransaction.commit()
+
+    return createdTax
+  } catch (error) {
+    console.log(error)
+
+    dbTransaction.rollback()
+
+    throw error
+  }
 }
 
 exports.get = async (query) => {
@@ -40,12 +65,9 @@ exports.get = async (query) => {
     const where = {
       [Op.or]: [
         { description: { [Op.iLike]: `%${query.search}%` } },
-        sequelize.where(
-          sequelize.cast(sequelize.col('Tax.date'), 'varchar'),
-          {
-            [Op.iLike]: `%${query.search}%`,
-          }
-        ),
+        sequelize.where(sequelize.cast(sequelize.col('Tax.date'), 'varchar'), {
+          [Op.iLike]: `%${query.search}%`,
+        }),
       ],
     }
     options.where = where

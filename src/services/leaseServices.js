@@ -2,7 +2,7 @@ const { Op } = require('sequelize')
 const { sequelize } = require('../utils/database')
 const customerServices = require('./customerServices')
 const itemServices = require('./itemServices')
-const { Lease, Customer, LeasedItem, Income } = require('../models')
+const { Lease, Customer, LeasedItem, Income, FinancialStatement } = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
 
 exports.create = async (lease) => {
@@ -94,6 +94,18 @@ exports.create = async (lease) => {
         gross: gross,
         customerId: customerInfo.id,
         itemId: itemInfo.id,
+      },
+      options
+    )
+
+    // create financial statement
+    await FinancialStatement.create(
+      {
+        date: lease.date,
+        description: `Leased ${itemInfo.name}`,
+        type: 'lease',
+        credit: gross,
+        debit: 0,
       },
       options
     )

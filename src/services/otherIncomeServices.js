@@ -1,15 +1,41 @@
 const { Op } = require('sequelize')
-const { OtherIncome } = require('../models')
+const { OtherIncome, FinancialStatement } = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
 
 exports.create = async (otherIncome) => {
-  let createdOtherIncome = await OtherIncome.create({
-    date: otherIncome.date,
-    description: otherIncome.description,
-    total: otherIncome.total,
-  })
+  const dbTransaction = await sequelize.transaction()
+  const options = { transaction: dbTransaction }
 
-  return createdOtherIncome
+  try {
+    const createdOtherIncome = await OtherIncome.create(
+      {
+        date: otherIncome.date,
+        description: otherIncome.description,
+        total: otherIncome.total,
+      },
+      options
+    )
+
+    // create financial statement
+    await FinancialStatement.create(
+      {
+        description: otherIncome.description,
+        type: 'otherIncome',
+        credit: otherIncome.total,
+        debit: 0,
+      },
+      options
+    )
+    await dbTransaction.commit()
+
+    return createdOtherIncome
+  } catch (error) {
+    console.log(error)
+
+    dbTransaction.rollback()
+
+    throw error
+  }
 }
 
 exports.get = async (query) => {

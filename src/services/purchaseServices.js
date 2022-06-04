@@ -1,7 +1,7 @@
 const { Op } = require('sequelize')
 const { sequelize } = require('../utils/database')
 const vendorServices = require('./vendorServices')
-const { Purchase, Item, Vendor } = require('../models')
+const { Purchase, Item, Vendor, FinancialStatement } = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
 
 exports.create = async (data) => {
@@ -16,7 +16,7 @@ exports.create = async (data) => {
     const vendorInfo = await vendorServices.getById(vendor.id)
 
     // exclude date from items
-    const {date, ...newItem} = items
+    const { date, ...newItem } = items
 
     // markup price
     const markup = 25 / 100
@@ -57,6 +57,18 @@ exports.create = async (data) => {
     })
 
     await purchase.save(options)
+
+    // create financial statement
+    await FinancialStatement.create(
+      {
+        date: items.date,
+        description: `Purchased ${itemInfo.name}`,
+        type: 'purchase',
+        credit: 0,
+        debit: gross,
+      },
+      options
+    )
 
     await dbTransaction.commit()
 

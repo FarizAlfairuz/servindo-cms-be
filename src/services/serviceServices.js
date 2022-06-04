@@ -1,5 +1,5 @@
 const { Op } = require('sequelize')
-const { Service, Income, sequelize } = require('../models')
+const { Service, Income, FinancialStatement, sequelize } = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
 
 exports.create = async (service) => {
@@ -27,6 +27,17 @@ exports.create = async (service) => {
         gross: service.price,
         itemId: service.itemId,
         customerId: service.customerId,
+      },
+      options
+    )
+
+    // create financial statement
+    await FinancialStatement.create(
+      {
+        description: `${service.date} payment`,
+        type: 'service',
+        credit: service.total,
+        debit: 0,
       },
       options
     )
