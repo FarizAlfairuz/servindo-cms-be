@@ -37,6 +37,7 @@ exports.create = async (tax) => {
     // create financial statement
     await FinancialStatement.create(
       {
+        date: tax.date,
         description: `${month} tax payment`,
         type: 'tax',
         credit: 0,

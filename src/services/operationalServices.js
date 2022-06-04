@@ -17,6 +17,7 @@ exports.create = async (operational) => {
   // create financial statement
   await FinancialStatement.create(
     {
+      date: operational.date,
       description: operational.description,
       type: 'operational',
       credit: 0,

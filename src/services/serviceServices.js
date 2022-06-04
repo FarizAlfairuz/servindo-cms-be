@@ -34,9 +34,10 @@ exports.create = async (service) => {
     // create financial statement
     await FinancialStatement.create(
       {
-        description: `${service.date} payment`,
+        date: service.date,
+        description: service.description,
         type: 'service',
-        credit: service.total,
+        credit: service.price,
         debit: 0,
       },
       options

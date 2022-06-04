@@ -19,6 +19,7 @@ exports.create = async (otherIncome) => {
     // create financial statement
     await FinancialStatement.create(
       {
+        date: otherIncome.date,
         description: otherIncome.description,
         type: 'otherIncome',
         credit: otherIncome.total,
