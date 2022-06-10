@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         as: 'customer',
         foreignKey: 'customerId',
       })
+      this.belongsTo(models.Item, { as: 'item', foreignKey: 'itemId' })
     }
   }
   Lease.init(

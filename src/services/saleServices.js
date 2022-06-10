@@ -10,7 +10,6 @@ const {
   FinancialStatement,
 } = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
-const { buildSanitizeFunction } = require('express-validator')
 
 exports.create = async (data) => {
   const { items, customer } = data
@@ -66,7 +65,7 @@ exports.create = async (data) => {
         type: itemInfo.type,
         date: items.date,
         quantity: items.quantity,
-        price: cogsGross,
+        price: items.price,
         gross: gross,
         itemId: itemInfo.id,
         customerId: customerInfo.id,

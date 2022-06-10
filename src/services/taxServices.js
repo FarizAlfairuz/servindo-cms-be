@@ -18,7 +18,7 @@ exports.create = async (tax) => {
     'December',
   ]
 
-  const date = new Date(lease.date)
+  const date = new Date(tax.date)
   const month = months[date.getMonth()]
 
   const dbTransaction = await sequelize.transaction()

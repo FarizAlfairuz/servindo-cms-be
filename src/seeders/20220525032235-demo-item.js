@@ -5,7 +5,7 @@ module.exports = {
     await queryInterface.bulkInsert('Items', [
       {
         name: 'Epson LQ20',
-        quantity: 10,
+        quantity: 500,
         cogs: 1750000,
         price: 3000000,
         discount: 0,

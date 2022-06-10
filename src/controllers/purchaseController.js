@@ -8,7 +8,7 @@ exports.createPurchase = async (req, res) => {
     const item = await itemServices.getById(data.itemId)
 
     const changelog = {
-      description: `Purchased item ${item.name}`,
+      description: `Purchased ${item.name}`,
       category: 'purchasing',
       changedBy: req.user.id,
     }

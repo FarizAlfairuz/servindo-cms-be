@@ -1,5 +1,12 @@
 const { Op } = require('sequelize')
-const { Service, Income, FinancialStatement, sequelize } = require('../models')
+const {
+  Service,
+  Income,
+  FinancialStatement,
+  sequelize,
+  Customer,
+  Item,
+} = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
 
 exports.create = async (service) => {
@@ -74,6 +81,8 @@ exports.get = async (query) => {
     options.where = where
   }
 
+  options.include = [{ model: Customer, as: 'customer' }]
+
   const service = await Service.findAll(options)
   const cursor = await getCursor(Service, query)
 
@@ -86,7 +95,9 @@ exports.get = async (query) => {
 }
 
 exports.getById = async (id) => {
-  const service = await Service.findByPk(id)
+  const service = await Service.findByPk(id, {
+    include: [{ model: Customer, as: 'customer' }],
+  })
 
   if (!service) return null
 

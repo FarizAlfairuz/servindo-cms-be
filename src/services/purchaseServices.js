@@ -24,7 +24,7 @@ exports.create = async (data) => {
     // process items
     const price = items.cogs + items.cogs * markup
 
-    const [itemInfo] = await Item.findOrCreate({
+    const [itemInfo, created] = await Item.findOrCreate({
       ...options,
       ...{
         where: { name: items.name },
@@ -36,7 +36,13 @@ exports.create = async (data) => {
     })
 
     // increase stock
-    const stock = itemInfo.quantity + items.quantity
+    let stock
+
+    if(created) {
+      stock = items.quantity
+    } else {
+      stock = itemInfo.quantity + items.quantity
+    }
 
     // sum gross
     const gross = items.cogs * items.quantity

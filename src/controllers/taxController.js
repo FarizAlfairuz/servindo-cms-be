@@ -9,7 +9,7 @@ exports.createTax = async (req, res) => {
     const data = await taxServices.create(tax)
 
     const changelog = {
-      description: `Created tax ${data.name}`,
+      description: `Created ${data.description}`,
       category: 'finance',
       changedBy: req.user.id,
     }
@@ -42,14 +42,14 @@ exports.getTaxs = async (req, res) => {
   try {
     const data = await taxServices.get(req.query)
 
-    return response.success(res, data, 'Successfully retrieved taxs!')
+    return response.success(res, data, 'Successfully retrieved taxes!')
   } catch (error) {
     console.log(error)
 
     return response.internal_server_error(
       res,
       undefined,
-      'Failed to retrieve taxs!'
+      'Failed to retrieve taxes!'
     )
   }
 }
@@ -86,7 +86,7 @@ exports.updateTaxById = async (req, res) => {
       return response.not_found(res, undefined, 'Tax not found!')
 
     const changelog = {
-      description: `Edited tax ${data.name}`,
+      description: `Edited ${data.description}`,
       category: 'finance',
       changedBy: req.user.id,
     }
@@ -115,7 +115,7 @@ exports.deleteTaxById = async (req, res) => {
       return response.not_found(res, undefined, 'Tax not found!')
 
     const changelog = {
-      description: `Deleted tax ${data}`,
+      description: `Deleted ${data}`,
       category: 'finance',
       changedBy: req.user.id,
     }

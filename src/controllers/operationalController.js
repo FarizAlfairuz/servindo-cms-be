@@ -9,7 +9,7 @@ exports.createOperational = async (req, res) => {
     const data = await operationalServices.create(operational)
 
     const changelog = {
-      description: `Created operational ${data.name}`,
+      description: `Created ${data.description}`,
       category: 'finance',
       changedBy: req.user.id
     }
@@ -80,7 +80,7 @@ exports.updateOperationalById = async (req, res) => {
     if (!data) return response.not_found(res, undefined, 'Operational not found!')
 
     const changelog = {
-      description: `Edited operational ${data.name}`,
+      description: `Edited ${data.description}`,
       category: 'finance',
       changedBy: req.user.id
     }
