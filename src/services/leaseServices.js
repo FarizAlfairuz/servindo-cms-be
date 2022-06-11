@@ -160,7 +160,7 @@ exports.get = async (query) => {
     const where = {
       [Op.or]: [
         sequelize.where(
-          sequelize.cast(sequelize.col('Lease.date'), 'varchar'),
+          sequelize.cast(sequelize.col('Lease.paymentDate'), 'varchar'),
           {
             [Op.iLike]: `%${query.search}%`,
           }
@@ -171,6 +171,8 @@ exports.get = async (query) => {
     }
     options.where = where
   }
+
+  options.order = [['paymentDate', 'DESC']]
 
   options.include = [
     { model: Customer, as: 'customer' },

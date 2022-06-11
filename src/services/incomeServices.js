@@ -34,6 +34,8 @@ exports.get = async (query) => {
     { model: Item, as: 'item' },
   ]
 
+  options.order = [['date', 'DESC']]
+
   const income = await Income.findAll(options)
   const cursor = await getCursor(Income, query)
 

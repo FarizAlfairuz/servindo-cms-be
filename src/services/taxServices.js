@@ -74,6 +74,8 @@ exports.get = async (query) => {
     options.where = where
   }
 
+  options.order = [['date', 'DESC']]
+
   const tax = await Tax.findAll(options)
   const cursor = await getCursor(Tax, query)
 

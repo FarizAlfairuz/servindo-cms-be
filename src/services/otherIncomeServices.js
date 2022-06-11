@@ -50,6 +50,8 @@ exports.get = async (query) => {
     options.where = where
   }
 
+  options.order = [['date', 'DESC']]
+
   const otherIncome = await OtherIncome.findAll(options)
   const cursor = await getCursor(OtherIncome, query)
 

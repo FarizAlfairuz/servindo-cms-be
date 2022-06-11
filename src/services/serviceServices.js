@@ -108,6 +108,8 @@ exports.get = async (query) => {
     options.where = where
   }
 
+  options.order = [['date', 'DESC']]
+
   options.include = [{ model: Customer, as: 'customer' }]
 
   const service = await Service.findAll(options)

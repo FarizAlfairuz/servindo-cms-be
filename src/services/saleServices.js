@@ -144,6 +144,8 @@ exports.get = async (query) => {
     options.where = where
   }
 
+  options.order = [['date', 'DESC']]
+
   options.include = [
     { model: Item, as: 'item' },
     { model: Customer, as: 'customer' },

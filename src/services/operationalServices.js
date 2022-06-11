@@ -59,6 +59,8 @@ exports.get = async (query) => {
     options.where = where
   }
 
+  options.order = [['date', 'DESC']]
+
   const operational = await Operational.findAll(options)
   const cursor = await getCursor(Operational, query)
 
