@@ -10,6 +10,7 @@ const {
   FinancialStatement,
 } = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
+const generateInvoice = require('../utils/invoice')
 
 exports.create = async (data) => {
   const { items, customer } = data
@@ -33,12 +34,16 @@ exports.create = async (data) => {
     const stock = itemInfo.quantity - items.quantity
 
     // sum gross
-    const gross = items.price * items.quantity
+    const totalPrice = items.price * items.quantity
+    // after tax
+    const gross = (totalPrice * (100 + items.tax)) / 100
 
-    // sum cost of goods sold gross
+    // sum cost of goods sold gross (base price * total buy)
     const cogsGross = itemInfo.cogs * items.quantity
 
+    // total sales (gross - discount)
     const netSales = gross - items.discount
+    // profit (total sales - total base price)
     const netProfit = netSales - cogsGross
 
     await itemInfo.set({
@@ -46,6 +51,22 @@ exports.create = async (data) => {
     })
     await itemInfo.save(options)
 
+    // generate invoice
+    const invoiceData = {
+      customer: customerInfo.toJSON(),
+      item: {
+        quantity: items.quantity,
+        name: itemInfo.name,
+        price: items.price,
+      },
+      id: sale.id,
+      tax: items.tax,
+      notice: 'purchases'
+    }
+
+    const invoicePath = await generateInvoice(invoiceData)
+
+    // save sale data
     sale.set({
       totalQuantity: items.quantity,
       gross: gross,
@@ -55,6 +76,8 @@ exports.create = async (data) => {
       netProfit,
       itemId: itemInfo.id,
       customerId: customerInfo.id,
+      tax: items.tax,
+      invoice: invoicePath,
     })
 
     await sale.save(options)
@@ -84,6 +107,8 @@ exports.create = async (data) => {
       },
       options
     )
+
+    
 
     await dbTransaction.commit()
 

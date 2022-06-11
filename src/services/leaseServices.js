@@ -11,6 +11,7 @@ const {
   Item,
 } = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
+const generateInvoice = require('../utils/invoice')
 
 exports.create = async (lease) => {
   const months = [
@@ -56,7 +57,8 @@ exports.create = async (lease) => {
     }
 
     // sum gross
-    const gross = lease.price * lease.quantity
+    const totalPrice = lease.price * lease.quantity
+    const gross = (totalPrice + 100 * lease.tax) / 100
 
     // check if items already leased
     if (leasedItemInfo === null) {
@@ -80,14 +82,31 @@ exports.create = async (lease) => {
       }
     }
 
+    // generate invoice
+    const invoiceData = {
+      customer: customerInfo.toJSON(),
+      item: {
+        quantity: lease.quantity,
+        name: `${month} ${date.getFullYear()} lease payment for ${itemInfo.name}`,
+        price: lease.price,
+      },
+      id: leaseData.id,
+      tax: lease.tax,
+      notice: 'payment'
+    }
+
+    const invoicePath = await generateInvoice(invoiceData)
+
     leaseData.set({
       paymentDate: lease.date,
       quantity: lease.quantity,
       price: lease.price,
       gross: gross,
-      description: `${month} lease payment`,
+      description: `${month} ${date.getFullYear()} lease payment`,
       customerId: customerInfo.id,
       itemId: itemInfo.id,
+      tax: lease.tax,
+      invoice: invoicePath,
     })
 
     await leaseData.save(options)

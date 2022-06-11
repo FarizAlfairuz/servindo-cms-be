@@ -41,6 +41,14 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: 0,
       },
+      tax: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+        defaultValue: 0,
+      },
+      invoice: {
+        type: DataTypes.TEXT,
+      },
     },
     {
       sequelize,

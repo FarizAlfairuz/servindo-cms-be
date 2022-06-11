@@ -13,7 +13,6 @@ module.exports = (sequelize, DataTypes) => {
         as: 'customer',
         foreignKey: 'customerId',
       })
-      this.belongsTo(models.Item, { as: 'item', foreignKey: 'itemId' })
     }
   }
   Service.init(
@@ -30,6 +29,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0,
+      },
+      tax: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+        defaultValue: 0,
+      },
+      invoice: {
+        type: DataTypes.TEXT,
       },
     },
     {

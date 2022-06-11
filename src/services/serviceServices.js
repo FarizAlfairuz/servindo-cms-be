@@ -5,24 +5,48 @@ const {
   FinancialStatement,
   sequelize,
   Customer,
-  Item,
 } = require('../models')
+const customerServices = require('./customerServices')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
+const generateInvoice = require('../utils/invoice')
 
 exports.create = async (service) => {
   const dbTransaction = await sequelize.transaction()
   const options = { transaction: dbTransaction }
   try {
+    const customerInfo = await customerServices.getById(service.customerId)
+
     const createdService = await Service.create(
       {
         description: service.description,
         date: service.date,
         price: service.price,
-        itemId: service.itemId,
-        customerId: service.customerId,
+        customerId: customerInfo.id,
+        tax: service.tax,
       },
       options
     )
+
+    // generate invoice
+    const invoiceData = {
+      customer: customerInfo.toJSON(),
+      item: {
+        quantity: 1,
+        name: service.description,
+        price: service.price,
+      },
+      id: createdService.id,
+      tax: service.tax,
+      notice: 'payment',
+    }
+
+    const invoicePath = await generateInvoice(invoiceData)
+
+    createdService.set({
+      invoice: invoicePath,
+    })
+
+    await createdService.save(options)
 
     // save to income table
     await Income.create(
