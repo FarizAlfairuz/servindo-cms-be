@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const response = require('../utils/response')
 
-const baseUrl = 'http://localhost:8000/api/invoice/'
+const baseUrl = process.env.FILE_DIRECTORY
 
 exports.getListFiles = (req, res) => {
   const directoryPath = path.join(__dirname, '../../invoice/')
@@ -32,7 +32,6 @@ exports.getListFiles = (req, res) => {
 exports.downloadFile = (req, res) => {
   const fileName = req.params.name
   const directoryPath = path.join(__dirname, '../../invoice/')
-  console.log(directoryPath)
 
   return res.download(directoryPath + fileName, fileName, (err) => {
     if (err) {
