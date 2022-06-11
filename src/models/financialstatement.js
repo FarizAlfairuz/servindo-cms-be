@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
           'tax',
           'operational',
           'otherIncome',
-          'service'
+          'service',
         ]),
         allowNull: false,
       },
@@ -49,5 +49,18 @@ module.exports = (sequelize, DataTypes) => {
       modelName: 'FinancialStatement',
     }
   )
+
+  FinancialStatement.beforeCreate((statement) => {
+    const negateDebit = statement.debit * -1
+    statement.debit = negateDebit
+  })
+
+  FinancialStatement.beforeUpdate((statement) => {
+    if (statement.debit) {
+      const negateDebit = statement.debit * -1
+      statement.debit = negateDebit
+    }
+  })
+
   return FinancialStatement
 }
