@@ -7,7 +7,7 @@ const router = Router()
 router
   .route('/leasedItems')
   .get(
-    checkRole(['superadmin', 'marketing']),
+    checkRole(['superadmin', 'marketing', 'purchasing']),
     leasedItemController.getLeasedItems
   )
 

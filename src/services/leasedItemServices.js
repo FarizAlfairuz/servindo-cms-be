@@ -1,5 +1,5 @@
 const { Op } = require('sequelize')
-const { LeasedItem } = require('../models')
+const { LeasedItem, Customer } = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
 
 exports.create = async (leasedItem) => {
@@ -21,8 +21,13 @@ exports.get = async (query) => {
     options.where = where
   }
 
+  options.include = [
+    { model: Customer, as: 'customer' },
+  ]
+
   const leasedItem = await LeasedItem.findAll(options)
   const cursor = await getCursor(LeasedItem, query)
+
 
   const data = {
     edge: leasedItem,

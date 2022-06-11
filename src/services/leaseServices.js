@@ -87,12 +87,14 @@ exports.create = async (lease) => {
       customer: customerInfo.toJSON(),
       item: {
         quantity: lease.quantity,
-        name: `${month} ${date.getFullYear()} lease payment for ${itemInfo.name}`,
+        name: `${month} ${date.getFullYear()} lease payment for ${
+          itemInfo.name
+        }`,
         price: lease.price,
       },
       id: leaseData.id,
       tax: lease.tax,
-      notice: 'payment'
+      notice: 'payment',
     }
 
     const invoicePath = await generateInvoice(invoiceData)
@@ -121,6 +123,7 @@ exports.create = async (lease) => {
         gross: gross,
         customerId: customerInfo.id,
         itemId: itemInfo.id,
+        invoice: invoicePath,
       },
       options
     )

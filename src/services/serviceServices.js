@@ -16,11 +16,13 @@ exports.create = async (service) => {
   try {
     const customerInfo = await customerServices.getById(service.customerId)
 
+    const price = (service.price * (100 + service.tax)) / 100
+
     const createdService = await Service.create(
       {
         description: service.description,
         date: service.date,
-        price: service.price,
+        price: price,
         customerId: customerInfo.id,
         tax: service.tax,
       },
@@ -58,6 +60,7 @@ exports.create = async (service) => {
         gross: service.price,
         itemId: service.itemId,
         customerId: service.customerId,
+        invoice: invoicePath,
       },
       options
     )

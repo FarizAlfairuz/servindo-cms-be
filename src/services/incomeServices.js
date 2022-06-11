@@ -30,9 +30,9 @@ exports.get = async (query) => {
   }
 
   options.include = [
-      { model: Customer, as: 'customer' },
-      { model: Item, as: 'item' },
-    ]
+    { model: Customer, as: 'customer' },
+    { model: Item, as: 'item' },
+  ]
 
   const income = await Income.findAll(options)
   const cursor = await getCursor(Income, query)

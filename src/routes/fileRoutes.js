@@ -1,9 +1,14 @@
 const { Router } = require('express')
 const { fileController } = require('../controllers')
+const { checkRole } = require('../middlewares')
 
 const router = Router()
 
-router.get('/files', fileController.getListFiles)
-router.get('/files/:name', fileController.downloadFile)
+router
+  .route('/files')
+  .get(checkRole(['superadmin', 'finance']), fileController.getListFiles)
+router
+  .route('/files/:name')
+  .get(checkRole(['superadmin', 'finance']), fileController.downloadFile)
 
 module.exports = router

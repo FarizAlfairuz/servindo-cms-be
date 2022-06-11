@@ -61,7 +61,7 @@ exports.create = async (data) => {
       },
       id: sale.id,
       tax: items.tax,
-      notice: 'purchases'
+      notice: 'purchases',
     }
 
     const invoicePath = await generateInvoice(invoiceData)
@@ -92,6 +92,7 @@ exports.create = async (data) => {
         gross: gross,
         itemId: itemInfo.id,
         customerId: customerInfo.id,
+        invoice: invoicePath,
       },
       options
     )
@@ -107,8 +108,6 @@ exports.create = async (data) => {
       },
       options
     )
-
-    
 
     await dbTransaction.commit()
 
