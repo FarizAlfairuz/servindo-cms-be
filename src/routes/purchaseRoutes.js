@@ -10,6 +10,9 @@ router
     checkRole(['superadmin', 'purchasing']),
     purchaseController.createPurchase
   )
-  .get(checkRole(['superadmin', 'purchasing']), purchaseController.getPurchases)
+  .get(
+    checkRole(['superadmin', 'purchasing', 'finance']),
+    purchaseController.getPurchases
+  )
 
 module.exports = router

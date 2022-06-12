@@ -11,6 +11,6 @@ router
 
 router
   .route('/balance')
-  .get(checkRole(['superadmin', 'marketing']), saleController.getBalance)
+  .get(checkRole(['superadmin', 'finance']), saleController.getBalance)
 
 module.exports = router
