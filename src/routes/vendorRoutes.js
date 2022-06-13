@@ -19,7 +19,7 @@ router
 router
   .route('/vendors/:id')
   .get(
-    checkRole('superadmin', 'purchasing'),
+    checkRole(['superadmin', 'purchasing']),
     vendorController.getVendorById
   )
   .delete(

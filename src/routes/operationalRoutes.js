@@ -15,7 +15,7 @@ router
 
 router
   .route('/operationals/:id')
-  .get(checkRole('superadmin', 'finance'), operationalController.getOperationalById)
+  .get(checkRole(['superadmin', 'finance']), operationalController.getOperationalById)
   .delete(
     checkRole(['superadmin', 'finance']),
     operationalController.deleteOperationalById

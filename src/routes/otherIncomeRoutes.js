@@ -19,7 +19,7 @@ router
 router
   .route('/otherIncomes/:id')
   .get(
-    checkRole('superadmin', 'finance'),
+    checkRole(['superadmin', 'finance']),
     otherIncomeController.getOtherIncomeById
   )
   .delete(

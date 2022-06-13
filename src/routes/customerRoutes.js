@@ -15,7 +15,7 @@ router
 
 router
   .route('/customers/:id')
-  .get(checkRole('superadmin', 'marketing'), customerController.getCustomerById)
+  .get(checkRole(['superadmin', 'marketing']), customerController.getCustomerById)
   .delete(
     checkRole(['superadmin', 'marketing']),
     customerController.deleteCustomerById

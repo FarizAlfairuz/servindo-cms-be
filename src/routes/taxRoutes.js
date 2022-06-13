@@ -19,7 +19,7 @@ router
 router
   .route('/taxes/:id')
   .get(
-    checkRole('superadmin', 'finance'),
+    checkRole(['superadmin', 'finance']),
     taxController.getTaxById
   )
   .delete(
