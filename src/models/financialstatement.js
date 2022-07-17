@@ -9,6 +9,13 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.belongsTo(models.Lease, {as: 'lease', foreignKey: 'leaseId'})
+      this.belongsTo(models.Operational, {as: 'operational', foreignKey: 'operationalId'})
+      this.belongsTo(models.OtherIncome, {as: 'otherIncome', foreignKey: 'otherIncomeId'})
+      this.belongsTo(models.Purchase, {as: 'purchase', foreignKey: 'purchaseId'})
+      this.belongsTo(models.Sale, {as: 'sale', foreignKey: 'saleId'})
+      this.belongsTo(models.Service, {as: 'service', foreignKey: 'serviceId'})
+      this.belongsTo(models.Tax, {as: 'tax', foreignKey: 'taxId'})
     }
   }
   FinancialStatement.init(

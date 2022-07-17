@@ -105,6 +105,7 @@ exports.create = async (data) => {
         type: 'sale',
         credit: gross,
         debit: 0,
+        saleId: sale.id
       },
       options
     )

@@ -100,7 +100,7 @@ exports.updateTaxById = async (req, res) => {
     return response.internal_server_error(
       res,
       undefined,
-      'Failed to update taxs!'
+      'Failed to update tax!'
     )
   }
 }

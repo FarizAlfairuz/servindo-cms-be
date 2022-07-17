@@ -2,22 +2,22 @@ const { Op } = require('sequelize')
 const { Tax, FinancialStatement, sequelize } = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
 
-exports.create = async (tax) => {
-  const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ]
+const months = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+]
 
+exports.create = async (tax) => {
   const date = new Date(tax.date)
   const month = months[date.getMonth()]
 
@@ -42,6 +42,7 @@ exports.create = async (tax) => {
         type: 'tax',
         credit: 0,
         debit: tax.total,
+        taxId: createdTax.id,
       },
       options
     )
@@ -96,25 +97,78 @@ exports.getById = async (id) => {
 }
 
 exports.updateById = async (id, updateData) => {
-  const tax = await Tax.findByPk(id)
+  const date = new Date(updateData.date)
+  const month = months[date.getMonth()]
 
-  if (!tax) return null
+  const dbTransaction = await sequelize.transaction()
+  const options = { transaction: dbTransaction }
+  try {
+    const tax = await Tax.findByPk(id)
 
-  tax.set(updateData)
+    if (!tax) return null
 
-  await tax.save()
+    const updatedTax = {
+      date: updateData.date,
+      description: `${month} tax payment`,
+      total: updateData.total,
+    }
 
-  return tax
+    tax.set(updatedTax)
+
+    await tax.save(options)
+
+    const financial = await FinancialStatement.findOne({
+      where: { taxId: tax.id },
+    })
+
+    financial.set({
+      date: updateData.date,
+      description: `${month} tax payment`,
+      debit: updateData.total
+    })
+
+    await financial.save(options)
+
+    await dbTransaction.commit()
+
+    return tax
+  } catch (error) {
+    console.log(error)
+
+    dbTransaction.rollback()
+
+    throw error
+  }
 }
 
 exports.deleteById = async (id) => {
-  const tax = await Tax.findByPk(id)
+  const dbTransaction = await sequelize.transaction()
+  const options = { transaction: dbTransaction }
 
-  if (!tax) return null
+  try {
+    const tax = await Tax.findByPk(id)
+  
+    if (!tax) return null
+  
+    const deletedTax = tax.description
 
-  const deletedTax = tax.description
+    const financial = await FinancialStatement.findOne({
+      where: { taxId: tax.id },
+    })
 
-  await tax.destroy()
+    await financial.destroy(options)
+  
+    await tax.destroy(options)
 
-  return deletedTax
+    await dbTransaction.commit()
+  
+    return deletedTax
+  } catch (error) {
+    console.log(error)
+
+    dbTransaction.rollback()
+
+    throw error
+  }
+
 }

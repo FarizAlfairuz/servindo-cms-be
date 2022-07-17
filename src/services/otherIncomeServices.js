@@ -24,6 +24,7 @@ exports.create = async (otherIncome) => {
         type: 'otherIncome',
         credit: otherIncome.total,
         debit: 0,
+        otherIncomeId: createdOtherIncome.id
       },
       options
     )

@@ -22,6 +22,7 @@ exports.create = async (operational) => {
       type: 'operational',
       credit: 0,
       debit: operational.total,
+      operationalId: createdOperational.id
     },
     options
   )
@@ -81,25 +82,71 @@ exports.getById = async (id) => {
 }
 
 exports.updateById = async (id, updateData) => {
-  const operational = await Operational.findByPk(id)
+  const dbTransaction = await sequelize.transaction()
+  const options = { transaction: dbTransaction }
 
-  if (!operational) return null
+  try {
+    const operational = await Operational.findByPk(id)
+  
+    if (!operational) return null
+  
+    operational.set(updateData)
+  
+    await operational.save(options)
 
-  operational.set(updateData)
+    const financial = await FinancialStatement.findOne({
+      where: { operationalId: operational.id },
+    })
 
-  await operational.save()
+    financial.set({
+      date: updateData.date,
+      description: updateData.description,
+      debit: updateData.total
+    })
 
-  return operational
+    await financial.save(options)
+
+    await dbTransaction.commit()
+  
+    return operational
+  } catch (error) {
+    console.log(error)
+
+    dbTransaction.rollback()
+
+    throw error
+  }
+
 }
 
 exports.deleteById = async (id) => {
-  const operational = await Operational.findByPk(id)
+  const dbTransaction = await sequelize.transaction()
+  const options = { transaction: dbTransaction }
 
-  if (!operational) return null
+  try {
+    const operational = await Operational.findByPk(id)
+  
+    if (!operational) return null
+  
+    const deletedOperational = operational.description
 
-  const deletedOperational = operational.description
+    const financial = await FinancialStatement.findOne({
+      where: { operationalId: operational.id },
+    })
+  
+    await financial.destroy(options)
 
-  await operational.destroy()
+    await operational.destroy(options)
 
-  return deletedOperational
+    await dbTransaction.commit()
+  
+    return deletedOperational
+  } catch (error) {
+    console.log(error)
+
+    dbTransaction.rollback()
+
+    throw error
+  }
+
 }

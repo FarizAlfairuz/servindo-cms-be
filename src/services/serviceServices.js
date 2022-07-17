@@ -73,6 +73,7 @@ exports.create = async (service) => {
         type: 'service',
         credit: service.price,
         debit: 0,
+        serviceId: createdService.id
       },
       options
     )

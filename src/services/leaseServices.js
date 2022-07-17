@@ -136,6 +136,7 @@ exports.create = async (lease) => {
         type: 'lease',
         credit: gross,
         debit: 0,
+        leaseId: leaseData.id
       },
       options
     )
