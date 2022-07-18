@@ -58,7 +58,7 @@ exports.create = async (lease) => {
 
     // sum gross
     const totalPrice = lease.price * lease.quantity
-    const gross = (totalPrice + (100 * lease.tax)) / 100
+    const gross = (totalPrice * (100 + lease.tax)) / 100
 
     // check if items already leased
     if (leasedItemInfo === null) {

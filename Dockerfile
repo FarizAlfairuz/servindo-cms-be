@@ -17,3 +17,6 @@ COPY . .
 
 # Create folder for invoice files
 RUN mkdir -p /app/api/invoice
+
+# Create folder for statement files
+RUN mkdir -p /app/api/statement

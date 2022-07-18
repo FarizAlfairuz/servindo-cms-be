@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>CV. Servindo Financial Statement</title>
+
+    <style>
+      .invoice-box {
+        max-width: 800px;
+        margin: auto;
+        padding: 30px;
+        font-size: 16px;
+        line-height: 24px;
+        font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+        color: #555;
+      }
+
+      .invoice-box table {
+        width: 100%;
+        line-height: inherit;
+        text-align: left;
+      }
+
+      .invoice-box table td {
+        padding: 5px;
+        vertical-align: top;
+      }
+
+      .invoice-box table tr td:nth-child(2) {
+        text-align: right;
+      }
+
+      .invoice-box table tr.top table td {
+        padding-bottom: 20px;
+      }
+
+      .invoice-box table tr.top table td.title {
+        font-size: 45px;
+        line-height: 45px;
+        color: #333;
+      }
+
+      .invoice-box table tr.information table td {
+        padding-bottom: 40px;
+      }
+
+      .invoice-box table tr.heading td {
+        background: #eee;
+        border-bottom: 1px solid #ddd;
+        font-weight: bold;
+      }
+
+      .invoice-box table tr.details td {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        font-weight: 600;
+      }
+
+      .invoice-box table tr.item td {
+        border-bottom: 1px solid #eee;
+      }
+
+      .invoice-box table tr.item.last td {
+        border-bottom: none;
+      }
+
+      .invoice-box table tr.total td {
+        border-top: 1px solid rgb(121, 121, 121);
+        font-weight: bold;
+        text-align: end;
+      }
+
+      @media only screen and (max-width: 600px) {
+        .invoice-box table tr.top table td {
+          width: 100%;
+          display: block;
+          text-align: center;
+        }
+
+        .invoice-box table tr.information table td {
+          width: 100%;
+          display: block;
+          text-align: center;
+        }
+      }
+
+      /** RTL **/
+      .invoice-box.rtl {
+        direction: rtl;
+        font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial,
+          sans-serif;
+      }
+
+      .invoice-box.rtl table {
+        text-align: right;
+      }
+
+      .invoice-box.rtl table tr td:nth-child(2) {
+        text-align: left;
+      }
+
+      .heading-title {
+        width: 100%;
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="invoice-box">
+      <div class="heading-title">
+        <h3>CV. SERVINDO</h3>
+        <h4>Laporan Keuangan</h4>
+        <h4>Periode {{month}} {{year}}</h4>
+      </div>
+      <table cellpadding="0" cellspacing="0">
+        <tr class="top">
+          <td colspan="2">
+            <table>
+              <tr>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr class="heading">
+          <td>Penerimaan Kas dari Pelanggan</td>
+
+          <td></td>
+        </tr>
+
+        <tr class="item">
+          <td>Penjualan Barang</td>
+
+          <td>{{sale}}</td>
+        </tr>
+        <tr class="item">
+          <td>Sewa Barang</td>
+
+          <td>{{lease}}</td>
+        </tr>
+        <tr class="item">
+          <td>Servis Barang</td>
+
+          <td>{{service}}</td>
+        </tr>
+
+        <tr class="total">
+          <td>Total Penerimaan Kas dari Pelanggan</td>
+
+          <td>{{totalIncome}}</td>
+        </tr>
+
+        <tr class="heading">
+          <td>Kas yang Dibayarkan ke Vendor</td>
+
+          <td></td>
+        </tr>
+        <tr class="item">
+          <td>Pembelian</td>
+
+          <td>{{purchase}}</td>
+        </tr>
+        <tr class="total">
+          <td>Total Kas yang Dibayarkan ke Vendor</td>
+
+          <td>{{purchase}}</td>
+        </tr>
+
+        <tr class="heading">
+          <td>Kas yang Dibayarkan untuk Pajak</td>
+
+          <td></td>
+        </tr>
+        <tr class="item">
+          <td>Pajak</td>
+
+          <td>{{tax}}</td>
+        </tr>
+        <tr class="total">
+          <td>Total Kas yang Dibayarkan untuk Pajak</td>
+
+          <td>{{tax}}</td>
+        </tr>
+
+        <tr class="heading">
+          <td>Kas yang Dibayarkan untuk Biaya Operasional</td>
+
+          <td></td>
+        </tr>
+        <tr class="item">
+          <td>Operasional</td>
+
+          <td>{{operational}}</td>
+        </tr>
+        <tr class="total">
+          <td>Total Kas yang Dibayarkan untuk Biaya Operasional</td>
+
+          <td>{{operational}}</td>
+        </tr>
+
+        <tr class="heading">
+          <td>Kas yang Diterima Lainnya</td>
+
+          <td></td>
+        </tr>
+        <tr class="item">
+          <td>Pemasukan Lainnya</td>
+
+          <td>{{otherIncome}}</td>
+        </tr>
+        <tr class="total">
+          <td>Total Kas yang Diterima Lainnya</td>
+
+          <td>{{otherIncome}}</td>
+        </tr>
+
+        <tr class="total">
+          <td>Total</td>
+
+          <td>{{total}}</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>
