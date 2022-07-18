@@ -26,11 +26,20 @@ module.exports = async (data = {}) => {
     operational,
     otherIncome,
     month,
-    year
+    year,
   } = data
 
   try {
-    const browser = await puppeteer.launch()
+    const browser = await puppeteer.launch({
+      executablePath: '/usr/bin/chromium-browser',
+      args: [
+        '--disable-gpu',
+        '--disable-setuid-sandbox',
+        '--no-sandbox',
+        '--no-zygote',
+        '--disable-dev-shm-usage',
+      ],
+    })
 
     const page = await browser.newPage()
 
@@ -49,7 +58,7 @@ module.exports = async (data = {}) => {
       otherIncome: toRupiah(otherIncome),
       total: toRupiah(total),
       month,
-      year
+      year,
     }
 
     const content = await compile('index', data)
