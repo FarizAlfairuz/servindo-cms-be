@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.js",
     "sequelize:model:update": "sequelize-auto -h localhost -d postgres -u postgres -x password -p 5432 --dialect postgres -o src/models -l es6 --sg --cm p",
-    "sequelize:db:seed": "(cd ./src && npx sequelize-cli db:seed:all --config config/databaseConfig.js)"
+    "sequelize:db:seed": "(cd ./src && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all --config config/databaseConfig.js)"
   },
   "author": "Falah Rizqi Abdullah Fairuz",
   "license": "ISC",
