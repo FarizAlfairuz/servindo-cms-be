@@ -5,6 +5,7 @@ const { handleUniqueViolation } = require('../helpers/handleSequelizeErrors')
 exports.createService = async (req, res) => {
   try {
     const service = req.body
+    if (req.file) service.image = req.file.path
 
     const data = await serviceServices.create(service)
 
@@ -74,6 +75,7 @@ exports.updateServiceById = async (req, res) => {
   try {
     const { id } = req.params
     const updateData = req.body
+    if (req.file) updateData.image = req.file.path
 
     const data = await serviceServices.updateById(id, updateData)
 

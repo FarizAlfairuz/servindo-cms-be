@@ -39,6 +39,7 @@ exports.create = async (lease) => {
       {
         paymentDate: lease.date,
         description: '',
+        image: lease.image
       },
       options
     )
@@ -57,8 +58,10 @@ exports.create = async (lease) => {
     }
 
     // sum gross
-    const totalPrice = lease.price * lease.quantity
-    const gross = (totalPrice * (100 + lease.tax)) / 100
+    const price = parseInt(lease.price, 10)
+    const tax = parseInt(lease.tax, 10)
+    const totalPrice = price * lease.quantity
+    const gross = (totalPrice * (100 + tax)) / 100
 
     // check if items already leased
     if (leasedItemInfo === null) {
@@ -90,10 +93,10 @@ exports.create = async (lease) => {
         name: `${month} ${date.getFullYear()} lease payment for ${
           itemInfo.name
         }`,
-        price: lease.price,
+        price: price,
       },
       id: leaseData.id,
-      tax: lease.tax,
+      tax: tax,
       notice: 'payment',
     }
 
@@ -102,12 +105,12 @@ exports.create = async (lease) => {
     leaseData.set({
       paymentDate: lease.date,
       quantity: lease.quantity,
-      price: lease.price,
+      price: price,
       gross: gross,
       description: `${month} ${date.getFullYear()} lease payment`,
       customerId: customerInfo.id,
       itemId: itemInfo.id,
-      tax: lease.tax,
+      tax: tax,
       invoice: invoicePath,
     })
 
@@ -119,7 +122,7 @@ exports.create = async (lease) => {
         type: 'lease',
         date: lease.date,
         quantity: lease.quantity,
-        price: lease.price,
+        price: price,
         gross: gross,
         customerId: customerInfo.id,
         itemId: itemInfo.id,

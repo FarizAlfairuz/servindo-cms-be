@@ -5,6 +5,7 @@ const { handleUniqueViolation } = require('../helpers/handleSequelizeErrors')
 exports.createOtherIncome = async (req, res) => {
   try {
     const otherIncome = req.body
+    if (req.file) otherIncome.image = req.file.path
 
     const data = await otherIncomeServices.create(otherIncome)
 
@@ -74,6 +75,8 @@ exports.updateOtherIncomeById = async (req, res) => {
   try {
     const { id } = req.params
     const updateData = req.body
+
+    if (req.file) updateData.image = req.file.path
 
     const data = await otherIncomeServices.updateById(id, updateData)
 

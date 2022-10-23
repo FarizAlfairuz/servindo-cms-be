@@ -49,6 +49,9 @@ module.exports = (sequelize, DataTypes) => {
       invoice: {
         type: DataTypes.TEXT,
       },
+      image: {
+        type: DataTypes.STRING,
+      },
     },
     {
       sequelize,

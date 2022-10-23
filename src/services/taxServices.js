@@ -1,6 +1,7 @@
 const { Op } = require('sequelize')
 const { Tax, FinancialStatement, sequelize } = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
+const { deleteCloudPicture } = require('../utils/cloudinary')
 
 const months = [
   'January',
@@ -30,6 +31,7 @@ exports.create = async (tax) => {
         date: tax.date,
         description: `${month} tax payment`,
         total: tax.total,
+        image: tax.image
       },
       options
     )
@@ -97,23 +99,23 @@ exports.getById = async (id) => {
 }
 
 exports.updateById = async (id, updateData) => {
-  const date = new Date(updateData.date)
-  const month = months[date.getMonth()]
-
   const dbTransaction = await sequelize.transaction()
   const options = { transaction: dbTransaction }
+
   try {
     const tax = await Tax.findByPk(id)
 
+    const updateDate = updateData.date ? updateData.date : tax.date
+    const date = new Date(Date.parse(updateDate))
+    const month = months[date.getMonth()]
+
     if (!tax) return null
 
-    const updatedTax = {
-      date: updateData.date,
-      description: `${month} tax payment`,
-      total: updateData.total,
-    }
+    if (tax.image) deleteCloudPicture(tax.image)
 
-    tax.set(updatedTax)
+    if (updateData.description) updateData.description = `${month} tax payment`
+
+    tax.set(updateData)
 
     await tax.save(options)
 
@@ -122,9 +124,9 @@ exports.updateById = async (id, updateData) => {
     })
 
     financial.set({
-      date: updateData.date,
+      date: date,
       description: `${month} tax payment`,
-      debit: updateData.total
+      debit: updateData.total ? updateData.total : financial.debit
     })
 
     await financial.save(options)
@@ -149,6 +151,8 @@ exports.deleteById = async (id) => {
     const tax = await Tax.findByPk(id)
   
     if (!tax) return null
+
+    if (tax.image) deleteCloudPicture(tax.image)
   
     const deletedTax = tax.description
 

@@ -1,6 +1,11 @@
 const { Router } = require('express')
+const multer = require('multer')
 const { serviceController } = require('../controllers')
 const { validateRequestSchema, checkRole } = require('../middlewares')
+const { getStorage } = require('../utils/cloudinary')
+
+const storage = getStorage('services')
+const upload = multer({ storage })
 
 const router = Router()
 
@@ -8,6 +13,7 @@ router
   .route('/services')
   .post(
     checkRole(['superadmin', 'marketing']),
+    upload.single('image'),
     validateRequestSchema,
     serviceController.createService
   )
@@ -28,6 +34,7 @@ router
   )
   .put(
     checkRole(['superadmin', 'marketing']),
+    upload.single('image'),
     validateRequestSchema,
     serviceController.updateServiceById
   )

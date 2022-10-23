@@ -1,6 +1,7 @@
 const { Op } = require('sequelize')
 const { OtherIncome, FinancialStatement, sequelize } = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
+const { deleteCloudPicture } = require('../utils/cloudinary')
 
 exports.create = async (otherIncome) => {
   const dbTransaction = await sequelize.transaction()
@@ -12,6 +13,7 @@ exports.create = async (otherIncome) => {
         date: otherIncome.date,
         description: otherIncome.description,
         total: otherIncome.total,
+        image: otherIncome.image,
       },
       options
     )
@@ -77,6 +79,8 @@ exports.updateById = async (id, updateData) => {
 
   if (!otherIncome) return null
 
+  if (otherIncome.image) deleteCloudPicture(otherIncome.image)
+
   otherIncome.set(updateData)
 
   await otherIncome.save()
@@ -88,6 +92,8 @@ exports.deleteById = async (id) => {
   const otherIncome = await OtherIncome.findByPk(id)
 
   if (!otherIncome) return null
+
+  if (otherIncome.image) deleteCloudPicture(otherIncome.image)
 
   const deletedOtherIncome = otherIncome.description
 

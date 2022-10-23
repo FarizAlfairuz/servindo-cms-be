@@ -1,6 +1,11 @@
 const { Router } = require('express')
+const multer = require('multer')
 const { taxController } = require('../controllers')
 const { validateRequestSchema, checkRole } = require('../middlewares')
+const { getStorage } = require('../utils/cloudinary')
+
+const storage = getStorage('taxes')
+const upload = multer({ storage })
 
 const router = Router()
 
@@ -8,6 +13,7 @@ router
   .route('/taxes')
   .post(
     checkRole(['superadmin', 'finance']),
+    upload.single('image'),
     validateRequestSchema,
     taxController.createTax
   )
@@ -28,6 +34,7 @@ router
   )
   .put(
     checkRole(['superadmin', 'finance']),
+    upload.single('image'),
     validateRequestSchema,
     taxController.updateTaxById
   )

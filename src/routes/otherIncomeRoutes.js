@@ -1,6 +1,11 @@
 const { Router } = require('express')
+const multer = require('multer')
 const { otherIncomeController } = require('../controllers')
 const { validateRequestSchema, checkRole } = require('../middlewares')
+const { getStorage } = require('../utils/cloudinary')
+
+const storage = getStorage('otherIncomes')
+const upload = multer({ storage })
 
 const router = Router()
 
@@ -8,6 +13,7 @@ router
   .route('/otherIncomes')
   .post(
     checkRole(['superadmin', 'finance']),
+    upload.single('image'),
     validateRequestSchema,
     otherIncomeController.createOtherIncome
   )
@@ -28,6 +34,7 @@ router
   )
   .put(
     checkRole(['superadmin', 'finance']),
+    upload.single('image'),
     validateRequestSchema,
     otherIncomeController.updateOtherIncomeById
   )

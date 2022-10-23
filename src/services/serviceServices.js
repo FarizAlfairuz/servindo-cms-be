@@ -9,6 +9,7 @@ const {
 const customerServices = require('./customerServices')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
 const generateInvoice = require('../utils/invoice')
+const { deleteCloudPicture } = require('../utils/cloudinary')
 
 exports.create = async (service) => {
   const dbTransaction = await sequelize.transaction()
@@ -16,7 +17,10 @@ exports.create = async (service) => {
   try {
     const customerInfo = await customerServices.getById(service.customerId)
 
-    const price = (service.price * (100 + service.tax)) / 100
+    const priceInt = parseInt(service.price, 10)
+    const tax = parseInt(service.tax, 10)
+
+    const price = (priceInt * (100 + tax)) / 100
 
     const createdService = await Service.create(
       {
@@ -24,7 +28,8 @@ exports.create = async (service) => {
         date: service.date,
         price: price,
         customerId: customerInfo.id,
-        tax: service.tax,
+        tax: tax,
+        image: service.image
       },
       options
     )
@@ -35,10 +40,10 @@ exports.create = async (service) => {
       item: {
         quantity: 1,
         name: service.description,
-        price: service.price,
+        price: price,
       },
       id: createdService.id,
-      tax: service.tax,
+      tax: tax,
       notice: 'payment',
     }
 
@@ -56,8 +61,8 @@ exports.create = async (service) => {
         type: 'service',
         date: service.date,
         quantity: 1,
-        price: service.price,
-        gross: service.price,
+        price: price,
+        gross: price,
         itemId: service.itemId,
         customerId: service.customerId,
         invoice: invoicePath,
@@ -71,7 +76,7 @@ exports.create = async (service) => {
         date: service.date,
         description: service.description,
         type: 'service',
-        credit: service.price,
+        credit: price,
         debit: 0,
         serviceId: createdService.id
       },
@@ -139,6 +144,8 @@ exports.updateById = async (id, updateData) => {
 
   if (!service) return null
 
+  if (service.image) deleteCloudPicture(service.image)
+
   service.set(updateData)
 
   await service.save()
@@ -150,6 +157,8 @@ exports.deleteById = async (id) => {
   const service = await Service.findByPk(id)
 
   if (!service) return null
+
+  if (service.image) deleteCloudPicture(service.image)
 
   const deletedService = service.description
 

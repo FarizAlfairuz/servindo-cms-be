@@ -4,25 +4,28 @@ const vendorServices = require('./vendorServices')
 const { Purchase, Item, Vendor, FinancialStatement } = require('../models')
 const { parseSequelizeOptions, getCursor } = require('../helpers')
 
-exports.create = async (data) => {
-  const { items, vendor } = data
-
+exports.create = async (items) => {
   const dbTransaction = await sequelize.transaction()
   const options = { transaction: dbTransaction }
 
   try {
-    const purchase = await Purchase.create({ date: items.date }, options)
+    const purchase = await Purchase.create(
+      { date: items.date, image: items.image },
+      options
+    )
 
-    const vendorInfo = await vendorServices.getById(vendor.id)
+    const vendorInfo = await vendorServices.getById(items.vendorId)
 
     // exclude date from items
-    const { date, ...newItem } = items
+    const { date, vendorId, image, ...newItem } = items
 
     // markup price
     const markup = 25 / 100
 
+    const cogs = parseInt(items.cogs, 10)
+
     // process items
-    const price = items.cogs + items.cogs * markup
+    const price = cogs + (cogs * markup)
 
     const [itemInfo, created] = await Item.findOrCreate({
       ...options,
@@ -38,18 +41,18 @@ exports.create = async (data) => {
     // increase stock
     let stock
 
-    if(created) {
+    if (created) {
       stock = items.quantity
     } else {
       stock = itemInfo.quantity + items.quantity
     }
 
     // sum gross
-    const gross = items.cogs * items.quantity
+    const gross = cogs * items.quantity
 
     await itemInfo.set({
       quantity: stock,
-      cogs: items.cogs,
+      cogs: cogs,
     })
 
     await itemInfo.save(options)
@@ -72,7 +75,7 @@ exports.create = async (data) => {
         type: 'purchase',
         credit: 0,
         debit: gross,
-        purchaseId: purchase.id
+        purchaseId: purchase.id,
       },
       options
     )

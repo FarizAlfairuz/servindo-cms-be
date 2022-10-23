@@ -4,6 +4,8 @@ const { leaseServices, changelogServices } = require('../services')
 exports.createLease = async (req, res) => {
   try {
     const lease = req.body
+    if (req.file) lease.image = req.file.path
+
     const data = await leaseServices.create(lease)
 
     const changelog = {

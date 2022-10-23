@@ -5,6 +5,7 @@ const { handleUniqueViolation } = require('../helpers/handleSequelizeErrors')
 exports.createTax = async (req, res) => {
   try {
     const tax = req.body
+    if (req.file) tax.image = req.file.path
 
     const data = await taxServices.create(tax)
 
@@ -79,6 +80,7 @@ exports.updateTaxById = async (req, res) => {
   try {
     const { id } = req.params
     const updateData = req.body
+    if (req.file) updateData.image = req.file.path
 
     const data = await taxServices.updateById(id, updateData)
 

@@ -12,18 +12,19 @@ const {
 const { parseSequelizeOptions, getCursor } = require('../helpers')
 const generateInvoice = require('../utils/invoice')
 
-exports.create = async (data) => {
-  const { items, customer } = data
-
+exports.create = async (items) => {
   const dbTransaction = await sequelize.transaction()
   const options = { transaction: dbTransaction }
 
   try {
-    const sale = await Sale.create({ date: items.date }, options)
+    const sale = await Sale.create(
+      { date: items.date, image: items.image },
+      options
+    )
 
-    const customerInfo = await customerServices.getById(customer.id)
+    const customerInfo = await customerServices.getById(items.customerId)
 
-    const itemInfo = await itemServices.getById(items.id)
+    const itemInfo = await itemServices.getById(items.itemId)
 
     // check items stock
     if (items.quantity > itemInfo.quantity) {
@@ -34,9 +35,11 @@ exports.create = async (data) => {
     const stock = itemInfo.quantity - items.quantity
 
     // sum gross
-    const totalPrice = items.price * items.quantity
+    const price = parseInt(items.price, 10)
+    const tax = parseInt(items.tax, 10)
+    const totalPrice = price * items.quantity
     // after tax
-    const gross = (totalPrice * (100 + items.tax)) / 100
+    const gross = (totalPrice * (100 + tax)) / 100
 
     // sum cost of goods sold gross (base price * total buy)
     const cogsGross = itemInfo.cogs * items.quantity
@@ -57,10 +60,10 @@ exports.create = async (data) => {
       item: {
         quantity: items.quantity,
         name: itemInfo.name,
-        price: items.price,
+        price: price,
       },
       id: sale.id,
-      tax: items.tax,
+      tax: tax,
       notice: 'purchases',
     }
 
@@ -76,7 +79,7 @@ exports.create = async (data) => {
       netProfit,
       itemId: itemInfo.id,
       customerId: customerInfo.id,
-      tax: items.tax,
+      tax: tax,
       invoice: invoicePath,
     })
 
@@ -88,7 +91,7 @@ exports.create = async (data) => {
         type: itemInfo.type,
         date: items.date,
         quantity: items.quantity,
-        price: items.price,
+        price: price,
         gross: gross,
         itemId: itemInfo.id,
         customerId: customerInfo.id,
@@ -105,7 +108,7 @@ exports.create = async (data) => {
         type: 'sale',
         credit: gross,
         debit: 0,
-        saleId: sale.id
+        saleId: sale.id,
       },
       options
     )

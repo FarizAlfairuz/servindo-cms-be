@@ -3,7 +3,10 @@ const { purchaseServices, changelogServices, itemServices } = require('../servic
 
 exports.createPurchase = async (req, res) => {
   try {
-    const data = await purchaseServices.create(req.body)
+    const purchase = req.body
+    if (req.file) purchase.image = req.file.path
+
+    const data = await purchaseServices.create(purchase)
 
     const item = await itemServices.getById(data.itemId)
 
