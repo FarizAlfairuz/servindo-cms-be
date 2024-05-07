@@ -4,6 +4,8 @@ FROM node:18-alpine
 RUN mkdir -p /app/api
 WORKDIR /app/api
 
+ENV HOST 0.0.0.0
+
 # Installing dependencies
 COPY package.json .
 COPY package-lock.json .
