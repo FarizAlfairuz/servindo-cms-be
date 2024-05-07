@@ -1,5 +1,5 @@
 module.exports = (entitledRoles) => (req, res, next) => {
-  if (!req.user) return res.status(401).json({ message: 'Not authenticated.' })
+  if (!req.user) return res.status(401).json({ message: 'Not authenticated. No user.' })
 
   let haveAccess = false
 
