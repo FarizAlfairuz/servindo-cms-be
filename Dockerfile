@@ -53,4 +53,6 @@ RUN mkdir -p /app/api/statement
 
 RUN npm run sequelize:db:seed
 
+RUN cd ..
+
 RUN npm run dev
