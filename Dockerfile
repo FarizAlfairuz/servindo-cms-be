@@ -51,4 +51,6 @@ RUN mkdir -p /app/api/invoice
 # Create folder for statement files
 RUN mkdir -p /app/api/statement
 
-RUN sh -c './wait-for-it.sh postgres:5432 -- npm run sequelize:db:seed ; node src/index.js'
+RUN npm run sequelize:db:seed
+
+RUN npm run dev
